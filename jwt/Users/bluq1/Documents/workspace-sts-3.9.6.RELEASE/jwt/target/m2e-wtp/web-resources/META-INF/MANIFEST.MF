@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: jwt
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: bluq1
+Implementation-Vendor-Id: pe.edu.unmsm.urtecho
+Build-Jdk: 1.8.0_201
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/jwt
+Created-By: Maven Integration for Eclipse
+
