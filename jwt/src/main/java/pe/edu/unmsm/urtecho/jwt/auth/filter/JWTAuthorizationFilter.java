@@ -17,6 +17,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import pe.edu.unmsm.urtecho.jwt.auth.service.JWTService;
 
+/**
+ * El filtro de autorizacion nos permite recibir el token cada que el cliente realice una solicitud al servidor
+ * verificar que el token este integro y correcto y luego permitir el acceso a algun recurso.
+ * */
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	
 	private JWTService jwtService;
@@ -25,22 +29,30 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		super(authenticationManager);
 		this.jwtService = jwtService;
 	}
-
+	
+	/**
+	 * Extraemos el token desde la cabecera y luego verificamos que el token exista o que empiece con Bearer 
+	 * si no es asi se continua con el filtro y salimos del metodo
+	 * si al menos el token existe entonces validamos la integridad del token y si todo es correcto entonces
+	 * asignamos en el contexto de autenticacion el objeto authentication y continuamos con el filtro
+	 * */	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		String header = request.getHeader(HEADER_STRING);
+		String token = request.getHeader(HEADER_STRING);
+		
+		System.out.println(token);
 
-		if (!requiresAuthentication(header)) {
+		if (!requiereAutenticacion(token)) {
 			chain.doFilter(request, response);
 			return;
 		}
 
 		UsernamePasswordAuthenticationToken authentication = null;
 		
-		if(jwtService.validate(header)) {
-			authentication = new UsernamePasswordAuthenticationToken(jwtService.getUsername(header), null, jwtService.getRoles(header));
+		if(jwtService.validarToken(token)) {
+			authentication = new UsernamePasswordAuthenticationToken(jwtService.getUsername(token), null, jwtService.getRoles(token));
 		}
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -48,9 +60,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		
 	}
 
-	protected boolean requiresAuthentication(String header) {
+	protected boolean requiereAutenticacion(String token) {
 
-		if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+		if (token == null || !token.startsWith(TOKEN_PREFIX)) {
 			return false;
 		}
 		return true;

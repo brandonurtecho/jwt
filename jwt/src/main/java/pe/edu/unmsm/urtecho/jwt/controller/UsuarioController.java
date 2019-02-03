@@ -24,23 +24,27 @@ public class UsuarioController {
 	private IUsuarioService usuarioService;
 	
 	@GetMapping(value = "/")
+	@Secured("ROLE_ADMIN")
     public List<Usuario> buscarTodos() {
         return usuarioService.buscar();
     }
     
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
         usuarioService.guardar(usuario);
         return ResponseEntity.ok("Usuario creado con exito");
     }
 
     @PutMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> actualizar(@RequestBody Usuario usuario) {
     	usuarioService.guardar(usuario);
         return ResponseEntity.ok("Usuario actualizado con exito");
     }
 
     @DeleteMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> eliminar(@RequestBody Usuario usuario) {
     	usuarioService.eliminar(usuario.getId());
         return ResponseEntity.ok("Usuario eliminado con exito");
